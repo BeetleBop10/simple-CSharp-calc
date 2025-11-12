@@ -1,0 +1,14 @@
+# Build artifacts
+bin/
+obj/
+*.exe
+
+# IDE files
+*.suo
+*.user
+*.csproj.user
+.vs/
+
+# OS files
+Thumbs.db
+.DS_Store
