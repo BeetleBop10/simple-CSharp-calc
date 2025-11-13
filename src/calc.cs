@@ -124,9 +124,10 @@ namespace idk
                 }
 
             }
-
-            Console.ReadLine();
+            Console.WriteLine("Press any key to exit");
+            Console.ReadKey();
 
         }
     }
 }
+
