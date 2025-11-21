@@ -1,133 +1,133 @@
 using System;
+using System.Globalization;
 
-namespace idk
+namespace Calc
 {
-    class idk
+    class calc
     {
         static void Main()
         {
+            Console.WriteLine("Calc v0.1.2.1, ")
            Console.WriteLine("Type the symbol for the operation you want to perform.");
-            string operation = Console.ReadLine();
-            if (operation == "+")
-            {
-                // Addition
-                Console.WriteLine("Type the first number you wanna add.");
-                if (decimal.TryParse(Console.ReadLine(), out decimal ad1))
-                {
-                    // ad1 was successfully converted
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number input.");
-                    // ad1 wasn't converted properly
-                }
-                Console.WriteLine("Now type the second number you wanna add");
-                if (decimal.TryParse(Console.ReadLine(), out decimal ad2))
-                {
-                    // ad2 was successfully converted
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number input.");
-                    // ad2 wasn't converted properly
-                }
-                decimal AddSum = ad1 + ad2;
-                Console.WriteLine(AddSum + " Is the sum if those two numbers.");
-            }
-            if (operation == "-")
-                {
-                // Subtraction
-                Console.WriteLine("Type the number you wanna subtract from.");
-                if (decimal.TryParse(Console.ReadLine(), out decimal sub1))
-                {
-                    // sub1 was successfully converted
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number input.");
-                    // sub1 wasn't converted properly
-                }
-                Console.WriteLine("Now type the amount you wanna subtract from the first number.");
-                if (decimal.TryParse(Console.ReadLine(), out decimal sub2))
-                {
-                    // sub2 was successfully converted
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number input.");
-                    // sub2 wasn't converted properly
-                }
-                decimal SubSum = sub1 - sub2;
-                Console.WriteLine(SubSum + " Is your answer.");
+           string operation = (Console.ReadLine() ?? string.Empty).Trim().ToLowerInvariant();
 
-            }
+           if (!TryReadInt("How many numbers are in the equation? (enter an integer >= 2)", out int count) || count < 2)
+           {
+               Console.WriteLine("You must enter an integer >= 2.");
+               return;
+           }
 
-            if (operation == "*" || operation == "x")
-            {
-                // Multiplication
-                Console.WriteLine("Type the number you wanna multiply.");
-                if (decimal.TryParse(Console.ReadLine(), out decimal mul1))
-                {
-                    // mul1 was successfully converted
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number input.");
-                    // mul1 wasn't converted properly
-                }
-                Console.WriteLine("Now type the number you wanna multiply the first number by.");
-                if (decimal.TryParse(Console.ReadLine(), out decimal mul2))
-                {
-                    // mul2 was successfully converted
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number input.");
-                    // mul2 wasn't converted properly
-                }
-                decimal MulSum = mul1 * mul2;
-                Console.WriteLine(MulSum + " Is your answer.");
+           switch (operation)
+           {
+               case "+":
+               {
+                   decimal sum = 0m;
+                   for (int i = 1; i <= count; i++)
+                   {
+                       if (!TryReadDecimal($"Enter number {i}:", out decimal n)) return;
+                       sum += n;
+                   }
+                   Console.WriteLine($"{sum} Is the sum.");
+                   break;
+               }
 
-            }
+               case "-":
+               {
+                   if (!TryReadDecimal("Enter number 1:", out decimal result)) return;
+                   for (int i = 2; i <= count; i++)
+                   {
+                       if (!TryReadDecimal($"Enter number {i}:", out decimal n)) return;
+                       result -= n;
+                   }
+                   Console.WriteLine($"{result} Is your answer.");
+                   break;
+               }
 
-            if (operation == "/")
-            {
-                // Division
-                Console.WriteLine("Type the number you wanna have divided.");
-                if (decimal.TryParse(Console.ReadLine(), out decimal div1))
-                {
-                    // div1 was successfully converted
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number input.");
-                    // div1 wasn't converted properly
-                }
-                Console.WriteLine("Now type the number you wanna divide the first one by.");
-                if (decimal.TryParse(Console.ReadLine(), out decimal div2))
-                {
-                    //div2 was properly converted
-                }
-                else
-                {
-                    Console.WriteLine("Invalid number input.");
-                    // div2 wasn't converted properly
-                }
-                if (div2 != 0)
-                {
-                    decimal DivSum = div1 / div2;
-                    Console.WriteLine(DivSum + " Is your answer.");
-                }
-                else
-                {
-                    Console.WriteLine("trying to throw a System.DivideByZeroException? try again, lel");
-                }
+               case "*":
+               case "x":
+               {
+                   decimal product = 1m;
+                   for (int i = 1; i <= count; i++)
+                   {
+                       if (!TryReadDecimal($"Enter number {i}:", out decimal n)) return;
+                       product *= n;
+                   }
+                   Console.WriteLine($"{product} Is your answer.");
+                   break;
+               }
 
-            }
-            Console.WriteLine("Press any key to exit");
-            Console.ReadKey();
+               case "/":
+               {
+                   if (!TryReadDecimal("Enter number 1 (numerator):", out decimal result)) return;
+                   for (int i = 2; i <= count; i++)
+                   {
+                       if (!TryReadDecimal($"Enter number {i} (divisor):", out decimal n)) return;
+                       if (n == 0m)
+                       {
+                           Console.WriteLine("Trying to throw a System.DivideByZeroException? Good luck, lel");
+                           return;
+                       }
+                       result /= n;
+                   }
+                   Console.WriteLine($"{result} Is your answer.");
+                   break;
+               }
 
+               case "^":
+               {
+                   if (!TryReadDouble("Enter number 1 (base):", out double dresult)) return;
+                   for (int i = 2; i <= count; i++)
+                   {
+                       if (!TryReadDouble($"Enter number {i} (exponent):", out double n)) return;
+                       dresult = Math.Pow(dresult, n);
+                   }
+                   Console.WriteLine($"{dresult} Is your answer.");
+                   break;
+               }
+
+               default:
+                   Console.WriteLine("Invalid op. Try +, -, *, x, /, or ^ instead?");
+                   break;
+           }
+
+           Console.WriteLine("Press any key to exit");
+           Console.ReadKey();
+        }
+
+        static bool TryReadDecimal(string prompt, out decimal value)
+        {
+            Console.WriteLine(prompt);
+            string input = Console.ReadLine() ?? string.Empty;
+            if (decimal.TryParse(input, NumberStyles.Number, CultureInfo.InvariantCulture, out value))
+                return true;
+
+            Console.WriteLine("Invalid number input.");
+            value = 0m;
+            return false;
+        }
+
+        static bool TryReadDouble(string prompt, out double value)
+        {
+            Console.WriteLine(prompt);
+            string input = Console.ReadLine() ?? string.Empty;
+            if (double.TryParse(input, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value))
+                return true;
+
+            Console.WriteLine("Invalid number input.");
+            value = 0.0;
+            return false;
+        }
+
+        static bool TryReadInt(string prompt, out int value)
+        {
+            Console.WriteLine(prompt);
+            string input = Console.ReadLine() ?? string.Empty;
+            if (int.TryParse(input, NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
+                return true;
+
+            Console.WriteLine("Invalid integer input.");
+            value = 0;
+            return false;
         }
     }
 }
-
